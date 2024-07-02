@@ -9,7 +9,7 @@
   "rewrites": [
     {
       "src": "/api/hello",
-      "dest": "/src/index.js"
+      "dest": "./src/index.js"
     }
   ]
 }
