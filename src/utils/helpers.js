@@ -15,6 +15,8 @@ const getLocationAndWeather = async (clientIp) => {
     const locationResponse = await axios.get(
       `https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.IPGEOLOCATION_API_KEY}&ip=${clientIp}`
     );
+    console.log(`Location response: ${JSON.stringify(locationResponse.data)}`);
+    
     const locationData = locationResponse.data;
 
     if (!locationData.city) {
@@ -24,6 +26,8 @@ const getLocationAndWeather = async (clientIp) => {
     const weatherResponse = await axios.get(
       `https://api.openweathermap.org/data/2.5/weather?q=${locationData.city}&units=metric&appid=${process.env.WEATHER_API_KEY}`
     );
+    console.log(`Weather response: ${JSON.stringify(weatherResponse.data)}`);
+    
     const weatherData = weatherResponse.data;
 
     return {
@@ -38,6 +42,7 @@ const getLocationAndWeather = async (clientIp) => {
 
 const getClientIp = (req) => {
   return (
+    req.ip ||
     req.headers["x-forwarded-for"] ||
     req.connection.remoteAddress ||
     req.socket.remoteAddress ||
