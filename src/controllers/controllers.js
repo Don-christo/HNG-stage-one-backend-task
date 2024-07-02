@@ -1,8 +1,17 @@
-const getLocationAndWeather = require("../utils/helpers");
+const { getLocationAndWeather, getClientIp } = require("../utils/helpers");
 
 const getTemperatureInLocation = async (req, res) => {
   const visitorName = req.query.visitor_name || "Guest";
-  const clientIp = req.ip;
+  const clientIp = getClientIp(req);
+
+  console.log(
+    `Request received: visitor_name=${visitorName}, client_ip=${clientIp}`
+  );
+
+  if (!clientIp) {
+    console.error("Client IP is undefined");
+    return res.status(400).json({ error: "Client IP is undefined" });
+  }
 
   try {
     const { location, temperature } = await getLocationAndWeather(clientIp);

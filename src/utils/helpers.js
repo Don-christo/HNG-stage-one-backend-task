@@ -4,6 +4,8 @@ dotenv.config();
 
 const getLocationAndWeather = async (clientIp) => {
 
+  console.log(`Fetching location and weather for IP: ${clientIp}`);
+
   try {
     // For development purposes, we will use the IP address 8.8.8.8 to mock the IP address of localhost
     if (clientIp === "::ffff:127.0.0.1") {
@@ -34,4 +36,13 @@ const getLocationAndWeather = async (clientIp) => {
   }
 };
 
-module.exports = getLocationAndWeather;
+const getClientIp = (req) => {
+  return (
+    req.headers["x-forwarded-for"] ||
+    req.connection.remoteAddress ||
+    req.socket.remoteAddress ||
+    req.connection.socket.remoteAddress
+  );
+};
+
+module.exports = { getLocationAndWeather, getClientIp };
