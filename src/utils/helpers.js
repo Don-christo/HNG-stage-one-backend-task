@@ -1,0 +1,37 @@
+const axios = require("axios");
+const dotenv = require("dotenv");
+dotenv.config();
+
+const getLocationAndWeather = async (clientIp) => {
+
+  try {
+    // For development purposes, we will use the IP address 8.8.8.8 to mock the IP address of localhost
+    if (clientIp === "::ffff:127.0.0.1") {
+      clientIp = "8.8.8.8";
+    }
+
+    const locationResponse = await axios.get(
+      `https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.IPGEOLOCATION_API_KEY}&ip=${clientIp}`
+    );
+    const locationData = locationResponse.data;
+
+    if (!locationData.city) {
+      throw new Error("City not found in IP geolocation data");
+    }
+
+    const weatherResponse = await axios.get(
+      `https://api.openweathermap.org/data/2.5/weather?q=${locationData.city}&units=metric&appid=${process.env.WEATHER_API_KEY}`
+    );
+    const weatherData = weatherResponse.data;
+
+    return {
+      location: locationData.city,
+      temperature: weatherData.main.temp,
+    };
+  } catch (error) {
+    console.error("Error fetching location or weather data", error);
+    throw new Error("Unable to fetch location and weather data");
+  }
+};
+
+module.exports = getLocationAndWeather;
